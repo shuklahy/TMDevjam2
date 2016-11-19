@@ -2,6 +2,7 @@ package com.example.santosh.tmdevjam;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,19 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.Arrays;
 
+<<<<<<< HEAD
+=======
+import com.ticketmaster.api.discovery.DiscoveryApi;
+import com.ticketmaster.api.discovery.operation.SearchEventsOperation;
+import com.ticketmaster.api.discovery.response.PagedResponse;
+import com.ticketmaster.discovery.model.Event;
+import com.ticketmaster.discovery.model.Events;
+
+import java.io.IOException;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+>>>>>>> c035fc0e5b83710ed9cacde5f1a33c7872aeae49
 
 public class MainActivity extends AppCompatActivity {
     CallbackManager callbackManager;
@@ -88,10 +102,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+<<<<<<< HEAD
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
+=======
+    public void tmAPIusage() throws IOException {
+        String apikey = "<YOUR KEY>";
+        DiscoveryApi api = new DiscoveryApi(apikey);
+
+        PagedResponse<Events> page = api.searchEvents(new SearchEventsOperation().keyword("<SEARCH TERM>"));
+        List<Event> events = page.getContent().getEvents();
+
+>>>>>>> c035fc0e5b83710ed9cacde5f1a33c7872aeae49
     }
 }

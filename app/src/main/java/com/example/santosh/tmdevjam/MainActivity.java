@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                try {
+                    tmAPIusage();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -61,11 +67,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tmAPIusage() throws IOException {
-        String apikey = "<YOUR KEY>";
+        String apikey = "mTgZ1tmApDNoOGfoepJwTpPDNez5oKBf";
         DiscoveryApi api = new DiscoveryApi(apikey);
 
-        PagedResponse<Events> page = api.searchEvents(new SearchEventsOperation().keyword("<SEARCH TERM>"));
+        PagedResponse<Events> page = api.searchEvents(new SearchEventsOperation().keyword("pop"));
         List<Event> events = page.getContent().getEvents();
+
+        for (int i=1; i<= events.size(); i++){
+            Log.d("TM",events.get(i).getName());
+        }
 
     }
 }

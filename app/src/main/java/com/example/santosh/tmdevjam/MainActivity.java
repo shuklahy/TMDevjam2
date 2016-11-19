@@ -1,7 +1,11 @@
 package com.example.santosh.tmdevjam;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.PowerManager;
 import android.provider.CalendarContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -23,6 +28,14 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
 import com.ticketmaster.api.discovery.DiscoveryApi;
@@ -33,6 +46,11 @@ import com.ticketmaster.discovery.model.Events;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -73,11 +91,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                try {
-                    tmAPIusage();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+                    final DownloadTask downloadTask = new DownloadTask(MainActivity.this);
+                    downloadTask.execute();
+
             }
         });
     }
@@ -114,11 +131,53 @@ public class MainActivity extends AppCompatActivity {
         String apikey = "mTgZ1tmApDNoOGfoepJwTpPDNez5oKBf";
         DiscoveryApi api = new DiscoveryApi(apikey);
 
-        PagedResponse<Events> page = api.searchEvents(new SearchEventsOperation().keyword("pop"));
+        PagedResponse<Events> page = api.searchEvents(new SearchEventsOperation().keyword("music"));
         List<Event> events = page.getContent().getEvents();
          for (int i=1; i<= events.size(); i++){
             Log.d("TM",events.get(i).getName());
         }
 
     }
+    public class DownloadTask extends AsyncTask<String, Integer, String> {
+        //ProgressDialog mProgressDialog;
+        private Context context;
+        //private PowerManager.WakeLock mWakeLock;
+        public DownloadTask(Context context) {
+            this.context = context;
+        }
+        @Override
+        protected String doInBackground(String... sUrl){
+            String apikey = "mTgZ1tmApDNoOGfoepJwTpPDNez5oKBf";
+            DiscoveryApi api = new DiscoveryApi(apikey);
+
+            PagedResponse<Events> page = null;
+            try {
+                page = api.searchEvents(new SearchEventsOperation().keyword("music"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            List<Event> events = page.getContent().getEvents();
+            for (int i=1; i<= events.size()-1; i++){
+                Log.d("TM",events.get(i).getName());
+            }
+            return null;
+        }
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            super.onProgressUpdate(progress);
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Toast.makeText(context, "Download error: " + result, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context, "File downloaded", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 }
